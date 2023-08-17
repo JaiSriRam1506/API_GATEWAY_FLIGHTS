@@ -3,16 +3,16 @@ const {UserService}=require('../services')
 
 const {StatusCodes}=require('http-status-codes')
 
-const {ErrorResponse,SuccessResponse}=require('../utils/common')
+const {ErrorResponse,SuccessResponse}=require('../utils/common');
 
 /**
  * POST:/signup
  * req-body{email:abc@gmail.com,password:1234}
  */
 
-async function signup(req,res){
+async function signUp(req,res){
     try {
-        const user=await UserService.signup({
+        const user=await UserService.signUp({
             email:req.body.email,
             password:req.body.password
             });
@@ -29,6 +29,26 @@ async function signup(req,res){
     }
 }
 
+async function signIn(req,res){
+    try {
+        const user=await UserService.signIn({
+            email:req.body.email,
+            password:req.body.password
+            });
+            SuccessResponse.data=user;
+            return res
+                .status(StatusCodes.OK)
+                .json(SuccessResponse);
+    } catch (error) {
+        Logger.error(error);
+        ErrorResponse.error=error;
+        return res
+                .status(error.statusCode)
+                .json(ErrorResponse);
+    }
+}
+
 module.exports={
-    signup
+    signUp,
+    signIn
 }
