@@ -10,7 +10,7 @@ router.post('/signup',UserMiddleware.validateCreateUserRequest,
                 UserController.signUp);
 
 /*  /api/v1/user/signin POST */
-router.post('/signin',
+router.post('/signin',UserMiddleware.validateCreateUserRequest,
                 UserController.signIn);
 
 module.exports=router;
