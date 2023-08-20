@@ -1,4 +1,4 @@
-const { StatusCodes } = require("http-status-codes");
+const { StatusCodes, UNAUTHORIZED } = require("http-status-codes");
 const { ErrorResponse } = require("../utils/common");
 const AppError = require("../utils/error/app-error");
 const {UserService}=require('../services')
@@ -43,7 +43,18 @@ async function checkAuthentication(req,res,next){
         .json(error)
     }
 }
+
+async function isAdmin(req,res,next){
+        const isAdmin=await UserService.isAdmin(req.user);
+        if(!isAdmin){
+            return res
+                    .status(StatusCodes.UNAUTHORIZED)
+                    .json({message:'User is UNAUTHORIZED for this action'});
+        }
+        next();
+}
 module.exports={
     validateCreateUserRequest,
-    checkAuthentication
+    checkAuthentication,
+    isAdmin
 }

@@ -62,7 +62,7 @@ async function isAuthenticated(token){
             throw new AppError('User not found',StatusCodes.NOT_FOUND);
         }
 
-        return user;
+        return user.id;
     } catch (error) {
         console.log(error);
         if(error instanceof AppError) throw error;
@@ -75,8 +75,45 @@ async function isAuthenticated(token){
         throw new AppError("Unable to authenticate to the Server",StatusCodes.INTERNAL_SERVER_ERROR);
     }
 }
+
+async function addRoleToUser(data){
+    try {
+        const user=await userRepository.get(data.id);
+        if(!user){
+            throw new AppError('User not found',StatusCodes.NOT_FOUND);
+        }
+        const role= await roleRepo.getRoleByName(data.role);
+        if(!role){
+            throw new AppError('Role not found',StatusCodes.NOT_FOUND);
+        }
+        user.addRole(role);
+        return user;
+    } catch (error) {
+        if(error instanceof AppError)throw error;
+        throw new AppError('Something went wrong',StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
+async function isAdmin(id){
+    try {
+        const user=await userRepository.get(id);
+        if(!user){
+            throw new AppError('No User Found',StatusCodes.NOT_FOUND);
+        }
+        const role=await roleRepo.getRoleByName(ENUMS.USER_ROLES_ENUMS.ADMIN);
+        if(!role){
+            throw new AppError('No such Roles found in the database',StatusCodes.NOT_FOUND);
+        }
+        return user.hasRole(role);
+    } catch (error) {
+        if(error instanceof AppError)throw error;
+        throw new AppError('Something went Wrong',StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
 module.exports={
     signUp,
     signIn,
-    isAuthenticated
+    isAuthenticated,
+    addRoleToUser,
+    isAdmin
 }

@@ -12,5 +12,8 @@ router.post('/signup',UserMiddleware.validateCreateUserRequest,
 /*  /api/v1/user/signin POST */
 router.post('/signin',UserMiddleware.validateCreateUserRequest,
                 UserController.signIn);
+const middleware=[UserMiddleware.checkAuthentication,UserMiddleware.isAdmin]
+//router.post('/role',UserController.addRoleToUser);
+router.post('/role',middleware,UserController.addRoleToUser);
 
 module.exports=router;
